@@ -1,0 +1,39 @@
+C51 COMPILER V9.60.0.0   MYPRINTF                                                          11/07/2021 16:02:58 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MYPRINTF
+OBJECT MODULE PLACED IN .\Objects\myprintf.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE myprintf.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(..\Class E) DEBUG OBJEC
+                    -TEXTEND PRINT(.\Listings\myprintf.lst) TABS(2) OBJECT(.\Objects\myprintf.obj)
+
+line level    source
+
+   1          #include <stdio.h>
+   2          #include <STC8.H>
+   3          
+   4          void UartSend(char dat)
+   5          {
+   6   1        SBUF = dat;         //SUBF接受/发送缓冲器(又叫串行通信特殊功能寄存器)
+   7   1        while(!TI);       // 等特数据传送 (TI发送中断标志)
+   8   1        TI = 0;
+   9   1      }
+  10          
+  11          char putchar(char c)
+  12          {
+  13   1        UartSend(c);
+  14   1        return c;
+  15   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     13    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,63 @@
+C51 COMPILER V9.60.0.0   ADC                                                               11/07/2021 16:02:57 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE ADC
+OBJECT MODULE PLACED IN .\Objects\adc.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE adc.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(..\Class E) DEBUG OBJECTEXTE
+                    -ND PRINT(.\Listings\adc.lst) TABS(2) OBJECT(.\Objects\adc.obj)
+
+line level    source
+
+   1          #include <STC8.H>
+   2          #include "intrins.h"
+   3          #include "debug.h"
+   4          
+   5          uint16 VP13=0;
+   6          uint16 VP12=0;
+   7          uint16 VP15=0;
+   8          uint16 VP14=0;
+   9          uint16 VP00=0;
+  10          uint16 VP01=0;
+  11          uint16 VP02=0;
+  12          
+  13          void ADCInit(void)
+  14          {
+  15   1        P1M0= 0x00;                                //设置P1为ADC口
+  16   1        P1M1|= 0x3C;
+  17   1        ADCCFG=0X0f;   //转化速度配置  默认最大F
+  18   1      }
+  19          
+  20          uint16 ReadADC(uint8 ch)
+  21          {   
+  22   1          uint16 adc,ADC;
+  23   1                                           //选择P1口的哪一口 这里的口和ch要对应才能达到选择该口
+  24   1          ADC_CONTR = ADC_POWER | ADC_START | ch ;//启动adc电源，开始A/D转换 ，配置采集口
+  25   1                                                               //这么用语句的主要原因就是不能位寻址
+  26   1                                                               //通道选择在后3位所以直接用一个整数表示ch
+  27   1                                                               //例如ch=6 那么对应的后三位就是110           
+  28   1          _nop_();         //Must wait before inquiry ， 
+  29   1          _nop_(); //设置ADC_CONTR寄存器后需加2个CPU时钟周期的延时，才能保证值被写入ADC_CONTR寄存器
+  30   1          while (!(ADC_CONTR & ADC_FLAG));//Wait complete flag    等待转化完成
+  31   1          ADC_CONTR &= ~ADC_FLAG;         //Close ADC 将标志位清零等待下次硬件置1
+  32   1      
+  33   1          //12位adc   读取方法
+  34   1          adc=ADC_RES;
+  35   1          ADC_RESL=ADC_RESL&0XF0;
+  36   1          adc=(adc<<4)|(ADC_RESL>>4);
+  37   1          return adc;
+  38   1      }
+*** WARNING C280 IN LINE 22 OF adc.c: 'ADC': unreferenced local variable
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     56    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     14       2
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,271 @@
+C51 COMPILER V9.60.0.0   DEBUG                                                             11/07/2021 16:02:57 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE DEBUG
+OBJECT MODULE PLACED IN .\Objects\debug.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE debug.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(..\Class E) DEBUG OBJECTEX
+                    -TEND PRINT(.\Listings\debug.lst) TABS(2) OBJECT(.\Objects\debug.obj)
+
+line level    source
+
+   1          #include <STC8.H>
+   2          #include <string.h>
+   3          #include "debug.h"
+   4          #include "adc.h"
+   5          #include "myprintf.h"
+   6          #define RXBUFFERSIZE 1
+   7          
+   8          int *BGV; //内部Bandgap电压值存放在idata中
+   9          //idata的EFH地址存放高字节
+  10          //idata的F0H地址存放低字节
+  11          //电压单位为毫伏(mV)
+  12          
+  13          extern code uint16 display0[];
+  14          extern code uint16 display1[];
+  15          extern code uint16 display2[];
+  16          extern code uint16 display3[];
+  17          
+  18          
+  19          float Variable[20];     //变量
+  20          float Parameter[20];    //参数
+  21          
+  22          uint8 SendPara,send_data_contorl=0,Save_Flag=0;
+  23          
+  24          extern int MYIAP;
+  25          
+  26          char RxBuffer[RXBUFFERSIZE];
+  27          uint8 aRxBuffer;
+  28          uint8 Uart1_Rx_Cnt = 0;
+  29          
+  30          
+  31          void my_putchar(uint8 temp)
+  32          {
+  33   1          UartSend(temp);
+  34   1      }
+  35          /*用来通知上位机新的一组数据开始，要保存数据必须发送它*/
+  36          void Send_Begin()
+  37          { 
+  38   1        my_putchar(0x55);
+  39   1        my_putchar(0xaa);
+  40   1        my_putchar(0xae);
+  41   1      }
+  42          
+  43          //测试数据生产 1
+  44          void Testdata_generate()    //generate生成
+  45          {
+  46   1        BGV = (int idata *)0xef;
+  47   1        Variable[0]=0;
+  48   1        Variable[1]=0;
+  49   1      }
+  50          
+  51          //发送变量
+  52          // Variable 变量 1
+  53          void Send_Variable()
+  54          {
+C51 COMPILER V9.60.0.0   DEBUG                                                             11/07/2021 16:02:57 PAGE 2   
+
+  55   1        uint8 i=0,ch=0;
+  56   1        float temp=0;
+  57   1        uint8 Variable_num=16;
+  58   1        my_putchar(0x55);
+  59   1        my_putchar(0xaa);
+  60   1        my_putchar(0xad);
+  61   1        my_putchar(Variable_num);
+  62   1        for(i=0;i<Variable_num;i++)
+  63   1        {
+  64   2          temp=Variable[i];
+  65   2          ch=BYTE0(temp);
+  66   2          my_putchar(ch);
+  67   2          ch=BYTE1(temp);
+  68   2          my_putchar(ch);
+  69   2          ch=BYTE2(temp);
+  70   2          my_putchar(ch);
+  71   2          ch=BYTE3(temp);
+  72   2          my_putchar(ch);
+  73   2        }
+  74   1        my_putchar(0x0d);
+  75   1      }
+  76          
+  77          //修改 参数
+  78          void Modify_Parameter(uint8 *buff)     //Modify 修改 Parameter参数
+  79          {
+  80   1        uint8 i=0,addr=0;
+  81   1        float temp,example=123.1;
+  82   1        uint8 Parameter_num=14; //14个可改参数
+  83   1        /*          修改参数数组         */
+  84   1        for(i=0;i<Parameter_num;i++)
+  85   1        {
+  86   2          BYTE0(temp)=*(uint8*)(buff+addr);
+  87   2          addr++;
+  88   2          BYTE1(temp)=*(uint8*)(buff+addr);
+  89   2          addr++;
+  90   2          BYTE2(temp)=*(uint8*)(buff+addr);
+  91   2          addr++;
+  92   2          BYTE3(temp)=*(uint8*)(buff+addr);
+  93   2          addr++;
+  94   2          Parameter[i]=temp;
+  95   2        }
+  96   1        Save_Parameter();
+  97   1      }
+  98          /*         从参数数组中更新参数值        */
+  99          void Save_Parameter()
+ 100          {
+ 101   1        P43=Parameter[0];
+ 102   1      }
+ 103          
+ 104          //发送参数
+ 105          void Send_Parameter()
+ 106          {
+ 107   1        uint8 i=0,ch=0;
+ 108   1        float temp=0;
+ 109   1        uint8 Parameter_num=14;  //14个可改参数
+ 110   1        
+ 111   1        /*         将参数值更新到参数数组中  示例         */
+ 112   1       // Parameter[0]=i1;
+ 113   1        Parameter[1]=P20;
+ 114   1        Parameter[2]=P21;
+ 115   1        Parameter[3]=P23;
+ 116   1        Parameter[4]=P24;
+C51 COMPILER V9.60.0.0   DEBUG                                                             11/07/2021 16:02:57 PAGE 3   
+
+ 117   1        
+ 118   1        my_putchar(0x55);
+ 119   1        my_putchar(0xaa);
+ 120   1        my_putchar(0xab);
+ 121   1        my_putchar(Parameter_num);
+ 122   1        for(i=0;i<Parameter_num;i++)
+ 123   1        {
+ 124   2          temp=Parameter[i];
+ 125   2          ch=BYTE0(temp);
+ 126   2          my_putchar(ch);
+ 127   2          ch=BYTE1(temp);
+ 128   2          my_putchar(ch);
+ 129   2          ch=BYTE2(temp);
+ 130   2          my_putchar(ch);
+ 131   2          ch=BYTE3(temp);
+ 132   2          my_putchar(ch);
+ 133   2        }
+ 134   1        my_putchar(0X0b);//帧尾
+ 135   1      }
+ 136          
+ 137          void send_init()//上位机发数据初始化
+ 138          {
+ 139   1        if(SendPara)
+ 140   1        {
+ 141   2           SendPara=0;
+ 142   2           Send_Parameter();
+ 143   2        }
+ 144   1        Send_Begin();
+ 145   1        Testdata_generate();
+ 146   1        Send_Variable();
+ 147   1      }
+ 148          
+ 149          void my_debug(unsigned char tmp)
+ 150          {
+ 151   1        static uint8 recv;
+ 152   1        static uint8 data_cnt=0;
+ 153   1        static uint8 predata[10];
+ 154   1        static uint8 Recv_Buff[100];
+ 155   1        static uint8 Data_Receiving=0;   //Data_Receiving数据接收
+ 156   1        
+ 157   1        //if(uart_query(uart1)==1)  uart_getchar (uart1,(uint8*)(&recv));  //根据实际的串口来修改     uart_query
+             -查询是否接收到一个字节     uart_getchar等待接收 1 个字节
+ 158   1        /**********代表正在接收来自上位机的参数数据*********/
+ 159   1        recv = tmp;
+ 160   1        
+ 161   1        if(Data_Receiving)
+ 162   1        {
+ 163   2          if(data_cnt<56)
+ 164   2          {
+ 165   3            Recv_Buff[data_cnt]= recv;
+ 166   3            data_cnt++;
+ 167   3          }
+ 168   2          else
+ 169   2          {
+ 170   3            data_cnt=0;    //达到帧长
+ 171   3            Data_Receiving=0;
+ 172   3            if(recv==0xab)  //帧尾
+ 173   3            {
+ 174   4              Modify_Parameter(Recv_Buff);
+ 175   4              SendPara=1;      //参数回传，确认参数修改完成
+ 176   4              Save_Flag=1;
+ 177   4            }
+C51 COMPILER V9.60.0.0   DEBUG                                                             11/07/2021 16:02:57 PAGE 4   
+
+ 178   3          }
+ 179   2        }
+ 180   1        else
+ 181   1        {
+ 182   2          // beep=1; //开启蜂鸣器
+ 183   2          
+ 184   2          switch(recv)         //判断功能字
+ 185   2          {
+ 186   3          case 0x30:           //车模启停开关 收到数据后可以控制小车的启动和停
+ 187   3            
+ 188   3            break;
+ 189   3            
+ 190   3          case 0x31:           //数据发送开关
+ 191   3            
+ 192   3            IAP_CONTR = 0x60;//单片机准备开始isp下载
+ 193   3          
+ 194   3            /*********由于数据发送时要占用部分CPU资源和运行时间，小车运行时不建议发送数据，所以可以关闭发送*****
+             -****/
+ 195   3            break;
+ 196   3            
+ 197   3          case 0x32:           //读取参数
+ 198   3            if(SendPara==0)
+ 199   3              SendPara=1;
+ 200   3            break;        
+ 201   3          case 0X33:             //修改参数
+ 202   3            Data_Receiving=1;
+ 203   3            data_cnt=0;
+ 204   3            break;
+ 205   3          case 0X34:             //保存参数
+ 206   3            break;
+ 207   3            
+ 208   3          case 0X35:             //SD卡数据保存开关
+ 209   3            
+ 210   3            break;
+ 211   3            
+ 212   3          case 0X36:             //读取SD卡数据保存起始扇区的信息
+ 213   3            
+ 214   3            break;
+ 215   3            
+ 216   3          case 0X37:             //SD卡上一帧
+ 217   3            
+ 218   3            break;
+ 219   3            
+ 220   3          case 0X38:             //SD卡下一帧
+ 221   3            
+ 222   3            break;
+ 223   3            
+ 224   3          case 0X39:             //扇区跳转
+ 225   3            
+ 226   3            break;
+ 227   3            
+ 228   3            
+ 229   3          default:           //
+ 230   3            break;
+ 231   3          }
+ 232   2        }
+ 233   1        predata[3]=predata[2];
+ 234   1        predata[2]=predata[1];
+ 235   1        predata[1]=predata[0];
+ 236   1        predata[0]=recv;
+ 237   1      }
+
+C51 COMPILER V9.60.0.0   DEBUG                                                             11/07/2021 16:02:57 PAGE 5   
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    804    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =    282      28
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
