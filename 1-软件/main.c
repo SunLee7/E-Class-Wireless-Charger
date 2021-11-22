@@ -7,7 +7,7 @@
 
 char str[100];
 uint8 times=0;
-uint16 V=0,I=0,Tem=0;
+uint16 V=0,I=0;
 
 void Delay1000ms()		//@24.000MHz
 {
@@ -95,10 +95,11 @@ void main()
 	}
 }
 
-
+//5ms中断一次
 void TM0_Isr() interrupt 1
 {
 	times++;
+	//100ms屏幕刷新一次
 	if(times==20)
 	{
 		times=0;
@@ -113,9 +114,9 @@ void TM0_Isr() interrupt 1
 	}
 	V+=0.05*ReadADC(3);
 	I+=0.05*ReadADC(4);
-	//Tem=ReadADC(5);
 }
 
+//上位机接收中断，这次没用上
 void uart_int(void) interrupt 4 using 1 //串口中断
 { 
 	unsigned char tmp;

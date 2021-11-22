@@ -1,10 +1,10 @@
-C51 COMPILER V9.60.0.0   OLED                                                              11/09/2021 19:43:13 PAGE 1   
+C51 COMPILER V9.60.0.0   OLED                                                              11/22/2021 14:49:46 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE OLED
 OBJECT MODULE PLACED IN .\Objects\oled.obj
-COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE oled.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(..\Class E) DEBUG OBJECTEXT
-                    -END PRINT(.\Listings\oled.lst) TABS(2) OBJECT(.\Objects\oled.obj)
+COMPILER INVOKED BY: C:\Keil_C51\C51\BIN\C51.EXE oled.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(..\Class E) DEBUG OBJECTEX
+                    -TEND PRINT(.\Listings\oled.lst) TABS(2) OBJECT(.\Objects\oled.obj)
 
 line level    source
 
@@ -62,7 +62,7 @@ line level    source
   52   2        }
   53   1        return;
   54   1      }
-C51 COMPILER V9.60.0.0   OLED                                                              11/09/2021 19:43:13 PAGE 2   
+C51 COMPILER V9.60.0.0   OLED                                                              11/22/2021 14:49:46 PAGE 2   
 
   55          #if OLED_MODE==1
               //向SSD1106写入一个字节。
@@ -126,7 +126,7 @@ line level    source
  114          void OLED_Display_Off(void)
  115          {
  116   1        OLED_WR_Byte(0X8D,OLED_CMD);  //SET DCDC命令
-C51 COMPILER V9.60.0.0   OLED                                                              11/09/2021 19:43:13 PAGE 3   
+C51 COMPILER V9.60.0.0   OLED                                                              11/22/2021 14:49:46 PAGE 3   
 
  117   1        OLED_WR_Byte(0X10,OLED_CMD);  //DCDC OFF
  118   1        OLED_WR_Byte(0XAE,OLED_CMD);  //DISPLAY OFF
@@ -190,7 +190,7 @@ line level    source
  176   1        u8 enshow=0;               
  177   1        for(t=0;t<len;t++)
  178   1        {
-C51 COMPILER V9.60.0.0   OLED                                                              11/09/2021 19:43:13 PAGE 4   
+C51 COMPILER V9.60.0.0   OLED                                                              11/22/2021 14:49:46 PAGE 4   
 
  179   2          temp=(num/oled_pow(10,len-t-1))%10;
  180   2          if(enshow==0&&t<(len-1))
@@ -254,7 +254,7 @@ line level    source
  236   2        }
  237   1      } 
  238          
-C51 COMPILER V9.60.0.0   OLED                                                              11/09/2021 19:43:13 PAGE 5   
+C51 COMPILER V9.60.0.0   OLED                                                              11/22/2021 14:49:46 PAGE 5   
 
  239          
  240          //初始化SSD1306             
@@ -318,7 +318,7 @@ line level    source
  298   1        OLED_WR_Byte(0xF1,OLED_CMD);//Set Pre-Charge as 15 Clocks & Discharge as 1 Clock
  299   1        OLED_WR_Byte(0xDA,OLED_CMD);//--set com pins hardware configuration
  300   1        OLED_WR_Byte(0x12,OLED_CMD);
-C51 COMPILER V9.60.0.0   OLED                                                              11/09/2021 19:43:13 PAGE 6   
+C51 COMPILER V9.60.0.0   OLED                                                              11/22/2021 14:49:46 PAGE 6   
 
  301   1        OLED_WR_Byte(0xDB,OLED_CMD);//--set vcomh
  302   1        OLED_WR_Byte(0x40,OLED_CMD);//Set VCOM Deselect Level

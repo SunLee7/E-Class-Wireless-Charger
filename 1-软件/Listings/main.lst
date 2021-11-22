@@ -1,10 +1,10 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              11/12/2021 14:40:41 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              11/22/2021 14:51:58 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
 OBJECT MODULE PLACED IN .\Objects\main.obj
-COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(..\Class E) DEBUG OBJECTEXT
-                    -END PRINT(.\Listings\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+COMPILER INVOKED BY: C:\Keil_C51\C51\BIN\C51.EXE main.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(..\Class E) DEBUG OBJECTEX
+                    -TEND PRINT(.\Listings\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
 
 line level    source
 
@@ -17,7 +17,7 @@ line level    source
    7          
    8          char str[100];
    9          uint8 times=0;
-  10          uint16 V=0,I=0,Tem=0;
+  10          uint16 V=0,I=0;
   11          
   12          void Delay1000ms()    //@24.000MHz
   13          {
@@ -62,11 +62,11 @@ line level    source
   52          
   53          void PWMInit()  //增强型pwm初始化
   54          {
-C51 COMPILER V9.60.0.0   MAIN                                                              11/12/2021 14:40:41 PAGE 2   
+C51 COMPILER V9.60.0.0   MAIN                                                              11/22/2021 14:51:58 PAGE 2   
 
   55   1        P_SW2 = 0x80;
   56   1        PWMCKS = 0x00; // PWM时钟为系统时钟
-  57   1        PWMC = (24000000/320000); //设置PWM周期(30000Hz)
+  57   1        PWMC = (24000000/320000); //设置PWM周期(320000Hz)
   58   1        
   59   1        PWM2T1= 0;
   60   1        PWM2T2= 0;
@@ -107,45 +107,46 @@ line level    source
   95   2        }
   96   1      }
   97          
-  98          
+  98          //5ms中断一次
   99          void TM0_Isr() interrupt 1
  100          {
  101   1        times++;
- 102   1        if(times==20)
- 103   1        {
- 104   2          times=0;
- 105   2      //    V = 1064;
- 106   2          sprintf(str,"Voltage:%.2fV   ",V*0.0134);
- 107   2          OLED_ShowString(0,0,str);
- 108   2          sprintf(str,"Current:%.2fA   ",I*0.00244);
- 109   2          OLED_ShowString(0,2,str);
- 110   2          sprintf(str,"Power:%.2fW     ",I*0.00244*V*0.0134);
- 111   2          OLED_ShowString(0,4,str);
- 112   2          V=0;I=0;
- 113   2        }
- 114   1        V+=0.05*ReadADC(3);
- 115   1        I+=0.05*ReadADC(4);
- 116   1        //Tem=ReadADC(5);
-C51 COMPILER V9.60.0.0   MAIN                                                              11/12/2021 14:40:41 PAGE 3   
+ 102   1        //100ms屏幕刷新一次
+ 103   1        if(times==20)
+ 104   1        {
+ 105   2          times=0;
+ 106   2      //    V = 1064;
+ 107   2          sprintf(str,"Voltage:%.2fV   ",V*0.0134);
+ 108   2          OLED_ShowString(0,0,str);
+ 109   2          sprintf(str,"Current:%.2fA   ",I*0.00244);
+ 110   2          OLED_ShowString(0,2,str);
+ 111   2          sprintf(str,"Power:%.2fW     ",I*0.00244*V*0.0134);
+ 112   2          OLED_ShowString(0,4,str);
+ 113   2          V=0;I=0;
+ 114   2        }
+ 115   1        V+=0.05*ReadADC(3);
+ 116   1        I+=0.05*ReadADC(4);
+C51 COMPILER V9.60.0.0   MAIN                                                              11/22/2021 14:51:58 PAGE 3   
 
  117   1      }
  118          
- 119          void uart_int(void) interrupt 4 using 1 //串口中断
- 120          { 
- 121   1        unsigned char tmp;
- 122   1        if (RI) 
- 123   1        {
- 124   2          tmp = SBUF;//获取字节数据
- 125   2          my_debug(tmp);//上位机接收函数
- 126   2          RI = 0;
- 127   2        }
- 128   1      }
+ 119          //上位机接收中断，这次没用上
+ 120          void uart_int(void) interrupt 4 using 1 //串口中断
+ 121          { 
+ 122   1        unsigned char tmp;
+ 123   1        if (RI) 
+ 124   1        {
+ 125   2          tmp = SBUF;//获取字节数据
+ 126   2          my_debug(tmp);//上位机接收函数
+ 127   2          RI = 0;
+ 128   2        }
+ 129   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =    663    ----
    CONSTANT SIZE    =     51    ----
-   XDATA SIZE       =    107    ----
+   XDATA SIZE       =    105    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

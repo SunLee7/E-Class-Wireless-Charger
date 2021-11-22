@@ -1,0 +1,8 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\oled.obj",
+".\Objects\adc.obj",
+".\Objects\debug.obj",
+".\Objects\myprintf.obj" 
+TO ".\Objects\Class E" 
+PRINT(".\Listings\Class E.m51") RAMSIZE(256) 

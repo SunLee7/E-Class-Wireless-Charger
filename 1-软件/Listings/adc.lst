@@ -1,10 +1,10 @@
-C51 COMPILER V9.60.0.0   ADC                                                               11/07/2021 16:02:57 PAGE 1   
+C51 COMPILER V9.60.0.0   ADC                                                               11/22/2021 14:49:46 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE ADC
 OBJECT MODULE PLACED IN .\Objects\adc.obj
-COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE adc.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(..\Class E) DEBUG OBJECTEXTE
-                    -ND PRINT(.\Listings\adc.lst) TABS(2) OBJECT(.\Objects\adc.obj)
+COMPILER INVOKED BY: C:\Keil_C51\C51\BIN\C51.EXE adc.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(..\Class E) DEBUG OBJECTEXT
+                    -END PRINT(.\Listings\adc.lst) TABS(2) OBJECT(.\Objects\adc.obj)
 
 line level    source
 
